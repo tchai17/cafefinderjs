@@ -1,3 +1,8 @@
+// This script uses JavaScript and Selenium to scrape cafe names from eatbook.sg
+// The script launches Firefox and goes to eatbook.sg, then prompts user for search term in terminal
+// It then saves all results in titles.txt
+
+
 const { Builder, By, Key, until } = require("selenium-webdriver");
 const fs = require("fs").promises;
 const readline = require("readline");
@@ -122,14 +127,14 @@ async function testfunc() {
         //await waitForElement(driver, allTab);
 
         // Click on 'All Articles'
-        //await driver.findElement(allTab).click();
-        //console.log("Clicked on all articles");
+        await driver.findElement(allTab).click();
+        // console.log("Clicked on all articles");
         
         // Ask the user for the search term
-        // const searchTerm = await askQuestion("Enter the search term: ");
+        const searchTerm = await askQuestion("Enter the search term: ");
 
         // go to the search bar, search for the user-inputted term
-        await driver.findElement(By.id("kw")).sendKeys("dessert", Key.RETURN);
+        await driver.findElement(By.id("kw")).sendKeys(searchTerm, Key.RETURN);
         await driver.sleep(2000);
 
         let titles = [];
@@ -152,7 +157,7 @@ async function testfunc() {
             for (let post of posts) {
                 let samplepost = await post.findElement(By.className("info-wrap"));
                 let sampletitle = await samplepost.findElement(By.className("title")).getText();
-                console.log(sampletitle);
+                // console.log(sampletitle);
                 titles.push(sampletitle);
             }
             
@@ -166,7 +171,7 @@ async function testfunc() {
             nextPageNumButton = pageCountElement.findElement(By.id(currentPage.toString()));
 
             await nextPageNumButton.click();
-            console.log("Clicked on next page");
+            // console.log("Clicked on next page");
 
             // Wait for the loading screen before checking for the real page number
             await waitForLoadingScreen(driver);
@@ -175,11 +180,11 @@ async function testfunc() {
             const realPageNumber = await getRealPageNumber(driver);
 
             // Log the real page number
-            console.log(`Navigated to real page ${realPageNumber}`);
+            // console.log(`Navigated to real page ${realPageNumber}`);
 
             // Check if the current page number has reached the specified limit
             if (maxPageNumber && currentPage >= maxPageNumber) {
-                console.log(`Reached the specified page limit (${maxPageNumber}). Stopping the script.`);
+                // console.log(`Reached the specified page limit (${maxPageNumber}). Stopping the script.`);
                 break;
             }
 
@@ -188,12 +193,12 @@ async function testfunc() {
 
             // Exit the loop if nextPage is not found
             if (!nextPage) {
-                console.log("No 'next' button found. Exiting loop.");
+                // console.log("No 'next' button found. Exiting loop.");
                 break;
             }
         }
             // Print results
-            console.log(titles);
+            // console.log(titles);
             // Save titles to a text file
             await saveTitlesToFile(titles, "titles.txt");
     } finally {
